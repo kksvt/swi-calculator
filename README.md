@@ -26,4 +26,4 @@ The syntax of each object should be as it follows:
 | value2 | the second number, should the operator require two operands |
 
 ## Output
-The result of each operation is saved into a *output.txt* file, with the result preceeded by the *name* (*identifier*). The results are sorted in an ascending order.
+The result of each operation is saved into an *output.txt* file, with the result preceeded by the *name* (*identifier*). The results are sorted in ascending order.
