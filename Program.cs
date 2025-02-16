@@ -10,37 +10,41 @@ namespace swi_calculator
         public string Op { get; set; } = string.Empty;
 
         [JsonPropertyName("value1")]
-        public double Value1 { get; set; }
+        public double? Value1 { get; set; }
 
         [JsonPropertyName("value2")]
         public double? Value2 { get; set; }
 
         public double Calculate()
         {
+            if (!Value1.HasValue)
+            {
+                throw new InvalidOperationException("Operator \"" + Op + "\" requires value 1");
+            }
             switch (Op)
             {
                 case "add":
                     if (!Value2.HasValue)
                     {
-                        throw new InvalidOperationException("Operator \"" + Op + "\" requires two operands.");
+                        throw new InvalidOperationException("Operator \"" + Op + "\" requires two operands");
                     }
-                    return Value1 + Value2.Value;
+                    return Value1.Value + Value2.Value;
                 case "sub":
                     if (!Value2.HasValue)
                     {
-                        throw new InvalidOperationException("Operator \"" + Op + "\" requires two operands.");
+                        throw new InvalidOperationException("Operator \"" + Op + "\" requires two operands");
                     }
-                    return Value1 - Value2.Value;
+                    return Value1.Value - Value2.Value;
                 case "mul":
                     if (!Value2.HasValue)
                     {
-                        throw new InvalidOperationException("Operator \"" + Op + "\" requires two operands.");
+                        throw new InvalidOperationException("Operator \"" + Op + "\" requires two operands");
                     }
-                    return Value1 * Value2.Value;
+                    return Value1.Value * Value2.Value;
                 case "sqrt":
-                    return Math.Sqrt(Value1);
+                    return Math.Sqrt(Value1.Value);
                 default:
-                    throw new NotImplementedException("Operation \"" +  Op + "\" is not implemented.");
+                    throw new NotImplementedException("Operator \"" +  Op + "\" is not implemented");
             }
         }
     }
@@ -81,7 +85,16 @@ namespace swi_calculator
                         JsonElement root = document.RootElement;
                         foreach (var operation in root.EnumerateObject())
                         {
-                            calculations.Add(new SwiMathObject(operation.Name, JsonSerializer.Deserialize<SwiMathOperation>(operation.Value)));
+                            try
+                            {
+                                calculations.Add(new SwiMathObject(operation.Name, JsonSerializer.Deserialize<SwiMathOperation>(operation.Value)));
+                            } catch (InvalidOperationException e)
+                            {
+                                Console.WriteLine(e.Message + ", skipping.");
+                            } catch (NotImplementedException e)
+                            {
+                                Console.WriteLine(e.Message + ", skipping.");
+                            }
                         }
 
                         calculations.Sort((calculation1, calculation2) => calculation1.Result.CompareTo(calculation2.Result));
