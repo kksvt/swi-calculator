@@ -17,6 +17,10 @@ namespace swi_calculator
 
         public double Calculate()
         {
+            if (Op == string.Empty)
+            {
+                throw new InvalidOperationException("Couldn't parse the operation");
+            }
             if (!Value1.HasValue)
             {
                 throw new InvalidOperationException("Operator \"" + Op + "\" requires value 1");
